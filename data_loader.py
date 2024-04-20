@@ -2,17 +2,8 @@ import trimesh
 import os
 import numpy as np
 
-def normalize_vertices(coords, target_range=(100,150)):
-    """
-    Normalizes a list of 3D coordinates to fit within a given target range.
+def normalize_vertices(coords, target_range=(-1,1)):
 
-    Args:
-        coords (list): A list of 3D coordinates, each represented as a tuple or list of (x, y, z).
-        target_range (tuple): The desired target range for the normalized coordinates, default is (0, 1).
-
-    Returns:
-        list: A list of normalized 3D coordinates.
-    """
     # Extract the minimum and maximum values for each dimension
     min_x = min(coord[0] for coord in coords)
     max_x = max(coord[0] for coord in coords)
@@ -35,18 +26,6 @@ def normalize_vertices(coords, target_range=(100,150)):
         normalized_coords.append((normalized_x, normalized_y, normalized_z))
 
     return normalized_coords
-    
-def load_mesh(path):
-    scene = trimesh.load_mesh(path)
-    if isinstance(scene, trimesh.Scene):
-        geometries = list(scene.geometry.values())
-        obj = geometries[0]
-        obj.vertices = normalize_vertices(obj.vertices)
-        return obj
-    else:
-        scene.vertices = normalize_vertices(scene.vertices)
-        return scene
-
 
 def list_obj(dir_path):
     # list to store files
@@ -55,28 +34,30 @@ def list_obj(dir_path):
     # Iterate directory
     for path in os.listdir(dir_path):
         # check if current path is a file
-        if os.path.isfile(os.path.join(dir_path, path)):
-            res.append(os.path.join(dir_path, path))
+        # if os.path.isfile(os.path.join(dir_path, path)):
+        res.append(os.path.join(dir_path, path))
     return res
-
-def load_meshes(path_list):
+def load_mesh(path, normalize = False, target_range = (-1,1)):
+    scene = trimesh.load_mesh(path)
+    if isinstance(scene, trimesh.Scene):
+        geometries = list(scene.geometry.values())
+        obj = geometries[0]
+        if normalize:
+            obj.vertices = normalize_vertices(obj.vertices, target_range=target_range)
+        return obj
+    else:
+        if normalize:
+            scene.vertices = normalize_vertices(scene.vertices)
+        return scene
+def load_meshes(path_list, normalize =False, target_range = (-1,1)):
     obj_list = []
     for path in path_list:
-        o1 = load_mesh(path)
+        o1 = load_mesh(path, normalize, target_range = target_range)
         obj_list.append(o1)
     
     return obj_list
-# dir_path = 'D:/Projects/Shadow Art/data/sparse'
-# res  = list_obj(dir_path)
-# print(len(res))
 
-if __name__ == '__main__':
-    data_dir = 'D:/Projects/Shadow Art/data/sparse'
-    path_list = list_obj(data_dir)
-
-    import random 
-    from data_loader import load_mesh
-    random_sample = random.sample(path_list, 5)
-    obj  = load_meshes(random_sample)
-
-    print(np.min(obj[0].vertices))
+# if __name__ == '__main__':
+#     data_dir = 'D:\Projects\Shadow Art\data/02808440/02808440'
+#     path_list = list_obj(data_dir)
+#     print(path_list)
