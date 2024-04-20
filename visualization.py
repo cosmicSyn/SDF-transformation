@@ -9,7 +9,7 @@ from pytorch3d.structures.meshes import (
     join_meshes_as_scene
 )
 from pytorch3d.vis.plotly_vis import plot_scene
-
+import plotly.graph_objects as go 
 
 def plot_3d(points_list, color = 'b', sample = False, sampling_percent = 0.05):
   color = ['r','b','g','y','#000']
@@ -66,4 +66,24 @@ def show_scene(final_mesh, plot_name="subplot1"):
           "mesh": final_mesh
       }
   })
+  fig.show()
+
+def scatter_plot(mask, grid):
+  fig = go.Figure(data=[go.Scatter3d(
+  x=grid[mask][:,0],
+  y=grid[mask][:, 1],
+  z=grid[mask][:,2],
+  mode='markers',
+  marker=dict(
+      size=1,
+      color='blue',
+      opacity=0.8
+  )
+  )])
+
+  fig.update_layout(scene=dict(
+                      xaxis_title='X',
+                      yaxis_title='Y',
+                      zaxis_title='Z'),
+                      margin=dict(l=0, r=0, b=0, t=0))
   fig.show()
