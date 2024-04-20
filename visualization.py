@@ -68,7 +68,7 @@ def show_scene(final_mesh, plot_name="subplot1"):
   })
   fig.show()
 
-def scatter_plot(mask, grid):
+def scatter_plot(mask, grid, color = 'blue'):
   fig = go.Figure(data=[go.Scatter3d(
   x=grid[mask][:,0],
   y=grid[mask][:, 1],
@@ -76,7 +76,7 @@ def scatter_plot(mask, grid):
   mode='markers',
   marker=dict(
       size=1,
-      color='blue',
+      color=color,
       opacity=0.8
   )
   )])
